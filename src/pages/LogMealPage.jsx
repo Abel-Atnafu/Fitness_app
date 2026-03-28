@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Camera, Upload, Loader2, Check, AlertCircle, ChevronDown, X, Sparkles } from 'lucide-react'
 import { analyzeFood } from '../lib/anthropic'
 import { addMeal, todayStr } from '../lib/db'
+import EthiopianFoodPicker from '../components/EthiopianFoodPicker'
 
 const mealTypes = [
   { value: 'breakfast', label: 'Breakfast', emoji: '🌅' },
@@ -133,6 +134,13 @@ export default function LogMealPage() {
           </button>
         ))}
       </div>
+
+      {/* Ethiopian food picker */}
+      <EthiopianFoodPicker onSelect={(food) => {
+        setForm(food)
+        setAnalysis(null)
+        setError(null)
+      }} />
 
       {/* Image area */}
       {!imagePreview ? (

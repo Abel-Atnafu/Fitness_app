@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Plus, Flame, TrendingDown } from 'lucide-react'
+import { Plus, Flame, TrendingDown, Droplets } from 'lucide-react'
 import ProgressRing from '../components/ProgressRing'
 import MacroBars from '../components/MacroBars'
 import MealCard from '../components/MealCard'
 import { getMeals, getDailyLog, deleteMeal, todayStr } from '../lib/db'
 
 const TARGET = 1850
+const WATER_GOAL = 8 // glasses
+
 const mealTypes = [
   { type: 'breakfast', emoji: '🌅', label: 'Breakfast' },
   { type: 'lunch', emoji: '☀️', label: 'Lunch' },
@@ -15,13 +17,29 @@ const mealTypes = [
   { type: 'snack', emoji: '🍿', label: 'Snack' },
 ]
 
+function getGreeting() {
+  const h = new Date().getHours()
+  if (h < 12) return { en: 'Good morning', am: 'እንደምን አደሩ' }
+  if (h < 17) return { en: 'Good afternoon', am: 'እንደምን ዋሉ' }
+  return { en: 'Good evening', am: 'እንደምን አመሹ' }
+}
+
+function getWaterKey() {
+  return `water_${todayStr()}`
+}
+
 export default function HomePage() {
   const navigate = useNavigate()
   const [meals, setMeals] = useState([])
   const [log, setLog] = useState({ total_calories: 0, total_protein: 0, total_carbs: 0, total_fat: 0 })
   const [loading, setLoading] = useState(true)
+  const [water, setWater] = useState(() => {
+    const saved = localStorage.getItem(getWaterKey())
+    return saved ? parseInt(saved) : 0
+  })
 
   const today = todayStr()
+  const greeting = getGreeting()
 
   const loadData = useCallback(async () => {
     try {
@@ -51,18 +69,32 @@ export default function HomePage() {
     }
   }
 
+  const addWater = () => {
+    if (water >= WATER_GOAL) return
+    const next = water + 1
+    setWater(next)
+    localStorage.setItem(getWaterKey(), String(next))
+  }
+
+  const removeWater = () => {
+    if (water <= 0) return
+    const next = water - 1
+    setWater(next)
+    localStorage.setItem(getWaterKey(), String(next))
+  }
+
   // Status message
   const pct = log.total_calories / TARGET
-  let statusMsg = "Start logging your meals!"
+  let statusMsg = 'Start logging your meals!'
   let statusColor = 'text-[#888]'
   if (log.total_calories > 0 && pct <= 0.85) {
     statusMsg = "You're on track — keep it going!"
     statusColor = 'text-[#22c55e]'
   } else if (pct > 0.85 && pct <= 1) {
-    statusMsg = "Almost at your limit, be mindful"
+    statusMsg = 'Almost at your limit, be mindful'
     statusColor = 'text-[#f59e0b]'
   } else if (pct > 1) {
-    statusMsg = "Over your target today"
+    statusMsg = 'Over your target today'
     statusColor = 'text-[#ef4444]'
   }
 
@@ -79,10 +111,13 @@ export default function HomePage() {
       exit={{ opacity: 0 }}
       className="px-4 pt-4 pb-6"
     >
-      {/* Header */}
+      {/* Header with greeting */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">CutCal</h1>
+          <p className="text-[10px] text-[#555] font-medium uppercase tracking-widest mb-0.5">
+            {greeting.am}
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight">CutCal 🇪🇹</h1>
           <p className="text-xs text-[#666] mt-0.5">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </p>
@@ -108,6 +143,58 @@ export default function HomePage() {
           carbs={log.total_carbs}
           fat={log.total_fat}
         />
+      </div>
+
+      {/* Water tracker */}
+      <div className="p-4 rounded-2xl bg-[#141414] border border-[#1e1e1e] mb-5">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Droplets size={15} className="text-[#3b82f6]" />
+            <span className="text-xs font-semibold text-[#ccc]">Water</span>
+            <span className="text-xs text-[#555]">{water}/{WATER_GOAL} glasses</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={removeWater}
+              disabled={water === 0}
+              className="w-6 h-6 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#666] hover:text-[#ccc] disabled:opacity-30 text-sm font-bold flex items-center justify-center transition-colors"
+            >
+              −
+            </button>
+            <button
+              onClick={addWater}
+              disabled={water >= WATER_GOAL}
+              className="w-6 h-6 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#666] hover:text-[#3b82f6] disabled:opacity-30 text-sm font-bold flex items-center justify-center transition-colors"
+            >
+              +
+            </button>
+          </div>
+        </div>
+        <div className="flex gap-1.5">
+          {Array.from({ length: WATER_GOAL }).map((_, i) => (
+            <motion.button
+              key={i}
+              whileTap={{ scale: 0.85 }}
+              onClick={() => {
+                const next = i < water ? i : i + 1
+                setWater(next)
+                localStorage.setItem(getWaterKey(), String(next))
+              }}
+              className="flex-1"
+            >
+              <div className={`h-6 rounded-lg transition-all ${
+                i < water
+                  ? 'bg-[#3b82f6]'
+                  : 'bg-[#1a1a1a] border border-[#2a2a2a]'
+              }`} />
+            </motion.button>
+          ))}
+        </div>
+        {water >= WATER_GOAL && (
+          <p className="text-[10px] text-[#3b82f6] text-center mt-2 font-medium">
+            Daily water goal reached! 💧
+          </p>
+        )}
       </div>
 
       {/* Quick log buttons */}
