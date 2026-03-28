@@ -39,7 +39,7 @@ Return ONLY a valid JSON object with no additional text, markdown, or formatting
 {"food_name": "string", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number, "confidence": "high|medium|low", "notes": "string"}`
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
