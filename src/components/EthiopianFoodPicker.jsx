@@ -3,18 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 
 const ETHIOPIAN_FOODS = [
-  { name: 'Injera', emoji: '🫓', cal: 170, protein: 5, carbs: 33, fat: 1, note: '1 piece · ~150g' },
+  { name: 'Injera', emoji: '🫓', cal: 190, protein: 6, carbs: 37, fat: 1, note: '1 piece · ~150g' },
   { name: 'Doro Wat', emoji: '🍗', cal: 320, protein: 28, carbs: 12, fat: 18, note: '1 serving' },
   { name: 'Shiro', emoji: '🫘', cal: 280, protein: 14, carbs: 35, fat: 8, note: '1 serving' },
   { name: 'Tibs', emoji: '🥩', cal: 260, protein: 24, carbs: 5, fat: 16, note: '1 serving' },
-  { name: 'Kitfo', emoji: '🥩', cal: 290, protein: 22, carbs: 2, fat: 22, note: '1 serving' },
+  { name: 'Kitfo', emoji: '🥩', cal: 335, protein: 22, carbs: 2, fat: 27, note: '1 serving' },
   { name: 'Misir Wat', emoji: '🍲', cal: 220, protein: 14, carbs: 36, fat: 3, note: '1 serving' },
   { name: 'Gomen', emoji: '🥬', cal: 90, protein: 4, carbs: 12, fat: 4, note: '1 serving' },
-  { name: 'Beyaynetu', emoji: '🍽️', cal: 480, protein: 22, carbs: 76, fat: 12, note: 'Fasting platter' },
+  { name: 'Beyaynetu', emoji: '🍽️', cal: 750, protein: 28, carbs: 110, fat: 18, note: 'Fasting platter' },
   { name: 'Ful', emoji: '🫘', cal: 187, protein: 13, carbs: 32, fat: 1, note: '1 cup' },
   { name: 'Firfir', emoji: '🍛', cal: 320, protein: 10, carbs: 55, fat: 7, note: '1 serving' },
   { name: 'Ayib', emoji: '🧀', cal: 130, protein: 11, carbs: 3, fat: 9, note: '100g' },
-  { name: 'Kategna', emoji: '🫓', cal: 200, protein: 4, carbs: 38, fat: 4, note: '1 piece' },
+  { name: 'Kategna', emoji: '🫓', cal: 160, protein: 4, carbs: 30, fat: 3, note: '1 piece' },
   { name: 'Chechebsa', emoji: '🥞', cal: 350, protein: 8, carbs: 48, fat: 14, note: '1 serving' },
   { name: 'Tegabino', emoji: '🍲', cal: 240, protein: 12, carbs: 32, fat: 7, note: '1 serving' },
   { name: 'Kinche', emoji: '🌾', cal: 210, protein: 8, carbs: 40, fat: 3, note: '1 cup cooked' },

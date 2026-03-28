@@ -44,17 +44,17 @@ export default async function handler(req, res) {
                 text: `Analyze this food image. Identify what food is shown and estimate the nutritional content per serving visible in the image. Be realistic with calorie and macro estimates — use typical restaurant/homemade portion sizes.
 
 You are especially knowledgeable about Ethiopian cuisine. Common Ethiopian foods and their approximate nutrition per serving:
-- Injera (1 piece ~150g): 170 cal, 5g protein, 33g carbs, 1g fat
+- Injera (1 piece ~150g): 190 cal, 6g protein, 37g carbs, 1g fat
 - Doro Wat (1 serving): 320 cal, 28g protein, 12g carbs, 18g fat
 - Shiro (1 serving): 280 cal, 14g protein, 35g carbs, 8g fat
 - Tibs (1 serving ~150g): 260 cal, 24g protein, 5g carbs, 16g fat
-- Kitfo (1 serving ~150g): 290 cal, 22g protein, 2g carbs, 22g fat
+- Kitfo (1 serving ~150g): 335 cal, 22g protein, 2g carbs, 27g fat
 - Misir Wat (1 serving): 220 cal, 14g protein, 36g carbs, 3g fat
 - Gomen (1 serving): 90 cal, 4g protein, 12g carbs, 4g fat
-- Beyaynetu / fasting platter: 480 cal, 22g protein, 76g carbs, 12g fat
+- Beyaynetu / fasting platter: 750 cal, 28g protein, 110g carbs, 18g fat
 - Ful (1 cup): 187 cal, 13g protein, 32g carbs, 1g fat
 - Firfir (1 serving): 320 cal, 10g protein, 55g carbs, 7g fat
-- Kategna (1 piece): 200 cal, 4g protein, 38g carbs, 4g fat
+- Kategna (1 piece): 160 cal, 4g protein, 30g carbs, 3g fat
 - Chechebsa (1 serving): 350 cal, 8g protein, 48g carbs, 14g fat
 
 When you see injera (the large grey/beige spongy flatbread), always include it in the estimate alongside any stews or toppings on it.
