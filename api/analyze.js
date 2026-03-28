@@ -7,8 +7,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' })
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY not configured' })
 
   try {
     const { image_base64, media_type } = req.body
@@ -17,31 +17,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'image_base64 is required' })
     }
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: media_type || 'image/jpeg',
-                  data: image_base64,
-                },
-              },
-              {
-                type: 'text',
-                text: `Analyze this food image. Identify what food is shown and estimate the nutritional content per serving visible in the image. Be realistic with calorie and macro estimates — use typical restaurant/homemade portion sizes.
+    const prompt = `Analyze this food image. Identify what food is shown and estimate the nutritional content per serving visible in the image. Be realistic with calorie and macro estimates — use typical restaurant/homemade portion sizes.
 
 You are especially knowledgeable about Ethiopian cuisine. Common Ethiopian foods and their approximate nutrition per serving:
 - Injera (1 piece ~150g): 190 cal, 6g protein, 37g carbs, 1g fat
@@ -60,13 +36,33 @@ You are especially knowledgeable about Ethiopian cuisine. Common Ethiopian foods
 When you see injera (the large grey/beige spongy flatbread), always include it in the estimate alongside any stews or toppings on it.
 
 Return ONLY a valid JSON object with no additional text, markdown, or formatting:
-{"food_name": "string", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number, "confidence": "high|medium|low", "notes": "string"}`,
-              },
-            ],
+{"food_name": "string", "calories": number, "protein_g": number, "carbs_g": number, "fat_g": number, "confidence": "high|medium|low", "notes": "string"}`
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  inline_data: {
+                    mime_type: media_type || 'image/jpeg',
+                    data: image_base64,
+                  },
+                },
+                { text: prompt },
+              ],
+            },
+          ],
+          generationConfig: {
+            response_mime_type: 'application/json',
           },
-        ],
-      }),
-    })
+        }),
+      }
+    )
 
     if (!response.ok) {
       const errText = await response.text()
@@ -74,7 +70,7 @@ Return ONLY a valid JSON object with no additional text, markdown, or formatting
     }
 
     const data = await response.json()
-    const text = data.content?.[0]?.text || ''
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
     const clean = text.replace(/```json\s*|```\s*/g, '').trim()
 
     const parsed = JSON.parse(clean)
